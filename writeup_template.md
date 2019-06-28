@@ -25,6 +25,10 @@ The goals / steps of this project are the following:
 [image5]: ./examples/placeholder_small.png "Recovery Image"
 [image6]: ./examples/placeholder_small.png "Normal Image"
 [image7]: ./examples/placeholder_small.png "Flipped Image"
+[image_3data]: ./examples/3_datasets.png
+[image_merge]: ./examples/full_dataset.png
+
+
 
 ## Rubric Points
 ### Here I will consider the [rubric points](https://review.udacity.com/#!/rubrics/432/view) individually and describe how I addressed each point in my implementation.  
@@ -70,9 +74,26 @@ The model used an adam optimizer, so the learning rate was not tuned manually (m
 
 #### 4. Appropriate training data
 
-Training data was chosen to keep the vehicle driving on the road. I used a combination of center lane driving, recovering from the left and right sides of the road ... 
+I gathered training data using Udacity's simulator, I created three principal datasets.
 
-For details about how I created the training data, see the next section. 
+1. Keeping the vehicle driving on the road. 
+2. Driving counterwise.
+3. Recovering from the left and right sides of the road.
+
+From the three datasets listed above, I took the pictures of the left and right cameras as well, with a correction factor of -0.3 and 0.3 respectively for the steerin angles.
+
+For details about how I created the training data, see the next section.
+
+Here is the histogram of the 3 datasets. I decided to create 3 datasets in order to have almost the same quantity of images for steering to right and steering to left.
+
+I also decided to flip the images from the center camera of the 1st and 3rd datasets. This is because when driving counterwise I just gathered data from one lap and I collected data from 2 laps when driving in the correct sense. 
+
+![alt text][image_3data]
+
+This is how it looks the 3 datasets merged.
+
+![alt text][image_merge]
+
 
 ### Model Architecture and Training Strategy
 
