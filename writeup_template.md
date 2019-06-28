@@ -27,6 +27,14 @@ The goals / steps of this project are the following:
 [image7]: ./examples/placeholder_small.png "Flipped Image"
 [image_3data]: ./examples/3_datasets.png
 [image_merge]: ./examples/full_dataset.png
+[image_right]: ./examples/right.jpg
+[image_left]: ./examples/left.jpg
+[image_center]: ./examples/center.jpg
+[image_dave]: ./examples/dave2.png
+[image_arch]: ./examples/architecture.png
+[image_low]: ./examples/low.png
+[image_theone]: ./examples/the_one.png
+[image_final]: ./examples/final_arch.png
 
 
 
@@ -58,19 +66,20 @@ The model.py file contains the code for training and saving the convolution neur
 
 #### 1. An appropriate model architecture has been employed
 
-My model consists of a convolution neural network with 3x3 filter sizes and depths between 32 and 128 (model.py lines 18-24) 
+My model consists of a convolution neural network with 5x5 and 3x3 filter sizes and depths between 8 and 64 (model.py lines 108-122) 
 
-The model includes RELU layers to introduce nonlinearity (code line 20), and the data is normalized in the model using a Keras lambda layer (code line 18). 
+The model includes RELU layers to introduce nonlinearity, and the data is normalized and cropeed in the model using a Keras lambda layer (line 105-106). 
 
 #### 2. Attempts to reduce overfitting in the model
 
-The model contains dropout layers in order to reduce overfitting (model.py lines 21). 
+The model contains dropout layers in order to reduce overfitting (model.py lines 128 an 133). 
+The model was trained and validated on different data sets to ensure that the model was not overfitting. (line 149)
 
-The model was trained and validated on different data sets to ensure that the model was not overfitting (code line 10-16). The model was tested by running it through the simulator and ensuring that the vehicle could stay on the track.
+The model was tested by running it through the simulator and ensuring that the vehicle could stay on the track, it was also tested counterwise, it performs well in both senses.
 
 #### 3. Model parameter tuning
 
-The model used an adam optimizer, so the learning rate was not tuned manually (model.py line 25).
+The model used an adam optimizer, so the learning rate was not tuned manually (model.py line 147).
 
 #### 4. Appropriate training data
 
@@ -94,57 +103,59 @@ This is how it looks the 3 datasets merged.
 
 ![alt text][image_merge]
 
+Here I show some examples from the recovering data.
+
+![alt text][image_right]
+Recovering right.
+
+![alt text][image_left]
+Recovering left.
+
+![alt text][image_center]
+After recovering from left.
+
+I resized the images down to 50% size (from 160x320 to 80x160). It is important to mention that I firstly collected data driving at speed of 30 in the simulator, but it did not work well, so I gathered data driving between 15-20 of speed. 
+
+I also normalized the data at the start of my neural network and cropped 25 pixels of the top and 10 of the bottom.
 
 ### Model Architecture and Training Strategy
 
 #### 1. Solution Design Approach
 
-The overall strategy for deriving a model architecture was to ...
+My first step was to use a convolution neural network model similar to the NVIDIA DAVE2 teamd, I thought this model might be appropriate because it was actually implemented on a real self driving car.
 
-My first step was to use a convolution neural network model similar to the ... I thought this model might be appropriate because ...
+![alt text][image_dave]
 
-In order to gauge how well the model was working, I split my image and steering angle data into a training and validation set. I found that my first model had a low mean squared error on the training set but a high mean squared error on the validation set. This implied that the model was overfitting. 
+However it did not work as I hoped, so I modified. I deleted a convolution layer and resize to 80x160 instead of 66x200 as the DAVE2 architecture does. My final model looks as follows:
 
-To combat the overfitting, I modified the model so that ...
+![alt text][image_arch]
 
-Then I ... 
+In order to gauge how well the model was working, I split my image and steering angle data into a training and validation set. I found that my first model had a very low mean squared error on the training and validation sets. I was impressed.
 
-The final step was to run the simulator to see how well the car was driving around track one. There were a few spots where the vehicle fell off the track... to improve the driving behavior in these cases, I ....
+![alt text][image_low]
 
-At the end of the process, the vehicle is able to drive autonomously around the track without leaving the road.
+When I went in autonomous mode, I got an even bigger surprise, the model was very bad.
+
+My initial model had some dropouts between the convolution layers and maxpooling too. I remove them and left only dropouts on the fully connected layers and maxpooling only at the end of the last convolution layer.
+
+Then got the next result.
+
+![alt text][image_theone]
+
+The loss is 10 times bigger than the previous case, however, it did perform well on the track.
+This means my previous model was overfitting. 
+
+The final step was to run the simulator to see how well the car was driving around track one. There were a few spots where the vehicle fell off the track, to improve this, I created the data set called "recovering", in which I saved images based on the curves.
 
 #### 2. Final Model Architecture
 
-The final model architecture (model.py lines 18-24) consisted of a convolution neural network with the following layers and layer sizes ...
+[image_final]: ./examples/final_arch.png
 
-Here is a visualization of the architecture (note: visualizing the architecture is optional according to the project rubric)
+After the collection process, I had 30332 number of data points.
 
-![alt text][image1]
+I finally randomly shuffled the data set and put 20% of the data into a validation set. 
 
-#### 3. Creation of the Training Set & Training Process
+I used this training data for training the model. The validation set helped determine if the model was over or under fitting. The ideal number of epochs was 5 because it tended to vary the loss of validation, on 5 epchoch I got 0.0547 while at 10 epochs I got 0.0548. I used an adam optimizer so that manually training the learning rate wasn't necessary.
 
-To capture good driving behavior, I first recorded two laps on track one using center lane driving. Here is an example image of center lane driving:
-
-![alt text][image2]
-
-I then recorded the vehicle recovering from the left side and right sides of the road back to center so that the vehicle would learn to .... These images show what a recovery looks like starting from ... :
-
-![alt text][image3]
-![alt text][image4]
-![alt text][image5]
-
-Then I repeated this process on track two in order to get more data points.
-
-To augment the data sat, I also flipped images and angles thinking that this would ... For example, here is an image that has then been flipped:
-
-![alt text][image6]
-![alt text][image7]
-
-Etc ....
-
-After the collection process, I had X number of data points. I then preprocessed this data by ...
-
-
-I finally randomly shuffled the data set and put Y% of the data into a validation set. 
-
-I used this training data for training the model. The validation set helped determine if the model was over or under fitting. The ideal number of epochs was Z as evidenced by ... I used an adam optimizer so that manually training the learning rate wasn't necessary.
+At the end of the process, the vehicle is able to drive autonomously around the track without leaving the road.
+You can find 2 videos of the track.One keeping the road on the correct sense (correct_side.avi) and one counterwise (video_counterwise.avi).
